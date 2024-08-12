@@ -42,3 +42,30 @@ class BasicBlock(nn.Module):
         out += identity
         out = self.relu(out)
         return out
+
+
+#
+# class BottleneckBlock(nn.Module):
+#     def __init__(self, in_channels, intermediate_channels, out_channels, stride=1, projections=None):
+#
+#         super(BottleneckBlock, self).__init__()
+#
+#         self.expansion = 4
+#         self.projections = projections
+
+
+class ResNet(nn.Module):
+    def __init__(self, block, layers, num_classes=1000):
+        super(ResNet, self).__init__()
+        self.in_channels = 64
+
+        self.conv1 = nn.Conv2d(in_channels=self.in_channels, out_channels=self.in_channels, kernel_size=7, stride=2,
+                               padding=3)
+        self.bn1 = nn.BatchNorm2d(self.in_channels)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # nn.AvgPool2d() can also be used
+        self.fc = nn.Linear(in_features=512, out_features=num_classes)
+
+    # def _make_layers(self):
