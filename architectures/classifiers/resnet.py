@@ -66,7 +66,7 @@ class Bottleneck(nn.Module):
                                padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channels)
 
-        # 1x1 conv
+        # 1x1 conv with expansion
         self.conv3 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels * self.expansion, kernel_size=1,
                                bias=False)
         self.bn3 = nn.BatchNorm2d(out_channels * self.expansion)
@@ -109,4 +109,20 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # nn.AvgPool2d() can also be used
         self.fc = nn.Linear(in_features=512, out_features=num_classes)
 
-    # def _make_layers(self):
+    def _make_layers(self, block, out_channels, num_blocks, stride=1, projections=None):
+        if stride != 1 or self.in_channels != out_channels * block.expansion:
+            projections = nn.Sequential(
+                # 1x1 conv
+                nn.Conv2d(in_channels=self.in_channels, out_channels=out_channels * block.expansion, kernel_size=1,
+                          stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels*block.expansion)
+            )
+
+        layers = [block(self.in_channels, self.out_channels, stride, projections)]
+
+        for _ in range(1, num_blocks):
+            layers.append(
+                block(self.in_channels, self.out_channels)
+            )
+
+        return nn.Sequential(*layers)
