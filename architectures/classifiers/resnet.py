@@ -47,27 +47,27 @@ class BasicBlock(nn.Module):
         return out
 
 
-class BottleneckBlock(nn.Module):
+class Bottleneck(nn.Module):
     def __init__(self, in_channels, intermediate_channels, out_channels, stride=1, projections=None):
-        super(BottleneckBlock, self).__init__()
+        super(Bottleneck, self).__init__()
         self.expansion = 4
         self.projections = projections
-        self.out_channels = out_channels * self.expansion
 
         # 1x1 conv
-        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=1,
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=1,
                                stride=stride, bias=False)
         # Note: According to the original authors downsampling is always performed at the first convolutional layer
         # To mimic PyTorch's version shift the stride argument to the 3x3 conv layer
         self.bn1 = nn.BatchNorm2d(intermediate_channels)
 
         # 3x3 conv
-        self.conv2 = nn.Conv2d(in_channels=intermediate_channels, out_channels=intermediate_channels, kernel_size=3,
+        self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3,
                                padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(intermediate_channels)
 
         # 1x1 conv
-        self.conv3 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels*self.expansion, kernel_size=1, bias=False)
+        self.conv3 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels * self.expansion, kernel_size=1,
+                               bias=False)
         self.bn3 = nn.BatchNorm2d(intermediate_channels)
 
         self.relu = nn.ReLU(inplace=True)
