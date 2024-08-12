@@ -37,7 +37,7 @@ class BasicBlock(nn.Module):
         out = self.bn2(out)
 
         if self.projections is not None:
-            identity = self.projections(x)  # Adding projections to identity
+            identity = self.projections(x)  # Adding projections to identity to match dimensions with output
 
         out += identity
         out = self.relu(out)
