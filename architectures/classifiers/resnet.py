@@ -3,9 +3,20 @@ from torch import nn
 
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, intermediate_channels, out_channels, stride=1, projections=None):
+        """
+            A Basic Block for ResNet.
+
+            params:
+                - in_channels (int): Number of input channels.
+                - intermediate_channels (int): Number of channels in the intermediate output.
+                - out_channels (int): Number of output channels.
+                - stride (int, optional): Stride for 1st convolutional layer. Defaults to 1, set 2 to for downsampling.
+                - projections (nn.Module, optional): Aligns dimensions of input and output for shortcut connection.
+            """
+
         super(BasicBlock, self).__init__()
 
-        # for the 1st convolutional layer, stride is 1 by default, but should be set to 2 if downsampling is to be done
+        # for the 1st convolutional layer, stride may be 1 or 2 (see docstring)
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=3,
                                stride=stride, padding=1, bias=False)  # Bias redundant due to follow-up BN layer
         self.bn1 = nn.BatchNorm2d(intermediate_channels)
@@ -25,7 +36,7 @@ class BasicBlock(nn.Module):
         out = self.conv2(out)
         out = self.bn2(out)
 
-        if self.projections:
+        if self.projections is not None:
             identity = self.projections(x)  # Adding projections to identity
 
         out += identity
