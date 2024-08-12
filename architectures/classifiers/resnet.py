@@ -96,12 +96,12 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, num_classes=1000):
+    def __init__(self, block, layers, num_classes=1000, color_channels=3):
         super(ResNet, self).__init__()
         self.in_channels = 64
 
-        # set in_channels for this layer to 1 for grayscale images
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=self.in_channels, kernel_size=7, stride=2,
+        # adjust color_channels for this layer to 1 for grayscale images
+        self.conv1 = nn.Conv2d(in_channels=color_channels, out_channels=self.in_channels, kernel_size=7, stride=2,
                                padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(self.in_channels)
         self.relu = nn.ReLU(inplace=True)
@@ -115,7 +115,8 @@ class ResNet(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # nn.AvgPool2d() can also be used
         self.fc = nn.Linear(in_features=512 * block.expansion, out_features=num_classes)
 
-    def _make_layers(self, block, out_channels, num_blocks, stride=1, projections=None):
+    def _make_layers(self, block, out_channels, num_blocks, stride=1):
+        projections = None
         if stride != 1 or self.in_channels != out_channels * block.expansion:
             projections = nn.Sequential(
                 # 1x1 conv
