@@ -7,12 +7,12 @@ class BasicBlock(nn.Module):
 
         # for the 1st convolutional layer, stride is 1 by default, but should be set to 2 if downsampling is to be done
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=3,
-                               stride=stride, padding=1)
+                               stride=stride, padding=1, bias=False)  # Bias redundant due to follow-up BN layer
         self.bn1 = nn.BatchNorm2d(intermediate_channels)
         self.relu = nn.ReLU(inplace=True)  # PyTorch and other implementations have 'inplace=True'
 
         self.conv2 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels, kernel_size=3,
-                               padding=1)  # stride 1 by default
+                               padding=1, bias=False)  # stride 1 by default
         self.bn2 = nn.BatchNorm2d(out_channels)
         self.projections = projections
 
