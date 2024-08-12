@@ -22,7 +22,7 @@ class BasicBlock(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=3,
                                stride=stride, padding=1, bias=False)
         # Note: Bias redundant due to follow-up BN layer.
-        # set bias to    True or omit the argument altogether to mimic Pytorch's implementation
+        # set bias to True or omit the argument altogether to mimic Pytorch's implementation
         self.bn1 = nn.BatchNorm2d(intermediate_channels)
 
         self.conv2 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels, kernel_size=3,
