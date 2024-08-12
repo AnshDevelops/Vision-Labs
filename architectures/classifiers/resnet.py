@@ -1,6 +1,9 @@
 from torch import nn
 
 
+# TODO: - add docstrings, other comments if necessary
+#   - add Kaiming initialization and any other implementations in the paper
+
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1, projections=None):
         """
