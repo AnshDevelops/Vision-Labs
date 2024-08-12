@@ -2,13 +2,12 @@ from torch import nn
 
 
 class BasicBlock(nn.Module):
-    def __init__(self, in_channels, intermediate_channels, out_channels, stride=1, projections=None):
+    def __init__(self, in_channels, out_channels, stride=1, projections=None):
         """
             A Basic Block for ResNet.
 
             params:
                 - in_channels (int): Number of input channels.
-                - intermediate_channels (int): Number of channels in the intermediate output.
                 - out_channels (int): Number of output channels.
                 - stride (int, optional): Stride for 1st convolutional layer. Defaults to 1, set 2 to for downsampling.
                 - projections (nn.Module, optional): Aligns dimensions of input and output for shortcut connection.
@@ -19,13 +18,13 @@ class BasicBlock(nn.Module):
         self.projections = projections
 
         # for the 1st convolutional layer, stride may be 1 or 2 (see docstring)
-        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=3,
+        self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3,
                                stride=stride, padding=1, bias=False)
         # Note: Bias redundant due to follow-up BN layer.
         # set bias to True or omit the argument altogether to mimic Pytorch's implementation
-        self.bn1 = nn.BatchNorm2d(intermediate_channels)
+        self.bn1 = nn.BatchNorm2d(out_channels)
 
-        self.conv2 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels, kernel_size=3,
+        self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3,
                                padding=1, bias=False)  # stride 1 by default
         self.bn2 = nn.BatchNorm2d(out_channels)
 
@@ -53,6 +52,7 @@ class BottleneckBlock(nn.Module):
         super(BottleneckBlock, self).__init__()
         self.expansion = 4
         self.projections = projections
+        self.out_channels = out_channels * self.expansion
 
         # 1x1 conv
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=1,
@@ -67,11 +67,10 @@ class BottleneckBlock(nn.Module):
         self.bn2 = nn.BatchNorm2d(intermediate_channels)
 
         # 1x1 conv
-        self.conv3 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels, kernel_size=1, bias=False)
+        self.conv3 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels*self.expansion, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(intermediate_channels)
 
         self.relu = nn.ReLU(inplace=True)
-
 
 
 class ResNet(nn.Module):
