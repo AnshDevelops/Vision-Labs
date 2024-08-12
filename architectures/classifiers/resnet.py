@@ -15,12 +15,13 @@ class BasicBlock(nn.Module):
             """
 
         super(BasicBlock, self).__init__()
+        self.expansion = 1  # number of channels preserved across all convolutional layers in a block
 
         # for the 1st convolutional layer, stride may be 1 or 2 (see docstring)
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=intermediate_channels, kernel_size=3,
                                stride=stride, padding=1, bias=False)  # Bias redundant due to follow-up BN layer
         self.bn1 = nn.BatchNorm2d(intermediate_channels)
-        self.relu = nn.ReLU(inplace=True)  # PyTorch and other implementations have 'inplace=True'
+        self.relu = nn.ReLU(inplace=True)  # Note: PyTorch and other implementations have 'inplace=True'
 
         self.conv2 = nn.Conv2d(in_channels=intermediate_channels, out_channels=out_channels, kernel_size=3,
                                padding=1, bias=False)  # stride 1 by default
@@ -44,10 +45,8 @@ class BasicBlock(nn.Module):
         return out
 
 
-#
 # class BottleneckBlock(nn.Module):
 #     def __init__(self, in_channels, intermediate_channels, out_channels, stride=1, projections=None):
-#
 #         super(BottleneckBlock, self).__init__()
 #
 #         self.expansion = 4
