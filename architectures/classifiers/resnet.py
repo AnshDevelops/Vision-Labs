@@ -123,8 +123,9 @@ class ResNet(nn.Module):
                 # PyTorch's implementation uses fan_out
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
             elif isinstance(m, nn.BatchNorm2d):
-                nn.init.constant_(m.weight, val=1)
-                nn.init.constant_(m.bias, val=0)
+                # Default initialization, ensures that BN behaves like identity initially
+                nn.init.constant_(m.weight, val=1)  # gamma
+                nn.init.constant_(m.bias, val=0)  # beta
 
     def _make_layers(self, block, out_channels, num_blocks, stride=1):
         projections = None
