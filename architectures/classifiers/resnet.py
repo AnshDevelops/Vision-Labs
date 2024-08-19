@@ -1,9 +1,6 @@
 from torch import nn
 
 
-# TODO: - add docstrings, other comments if necessary
-#   - add Kaiming initialization and any other implementations in the paper
-
 class BasicBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1, projections=None):
         """
@@ -24,7 +21,6 @@ class BasicBlock(nn.Module):
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3,
                                stride=stride, padding=1, bias=False)
         # Note: Bias redundant due to follow-up BN layer.
-        # set bias to True or omit the argument altogether to mimic Pytorch's implementation
         self.bn1 = nn.BatchNorm2d(out_channels)
 
         self.conv2 = nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3,
@@ -117,6 +113,18 @@ class ResNet(nn.Module):
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))  # nn.AvgPool2d() can also be used
         self.fc = nn.Linear(in_features=512 * block.expansion, out_features=num_classes)
+
+        self._initalize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                # fan_out helps stabilize gradient flow during backpropagation for very deep networks
+                # PyTorch's implementation uses fan_out
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, val=1)
+                nn.init.constant_(m.bias, val=0)
 
     def _make_layers(self, block, out_channels, num_blocks, stride=1):
         projections = None
