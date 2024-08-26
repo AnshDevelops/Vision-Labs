@@ -11,7 +11,7 @@ class BasicBlock(nn.Module):
                 - out_channels (int): Number of output channels.
                 - stride (int, optional): Stride for 1st convolutional layer. Defaults to 1, set 2 to for downsampling.
                 - projections (nn.Module, optional): Aligns dimensions of input and output for shortcut connection.
-            """
+        """
 
         super(BasicBlock, self).__init__()
         self.expansion = 1  # number of channels preserved across all convolutional layers in BasicBlock
@@ -48,6 +48,19 @@ class BasicBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
+    """
+        A Bottleneck block for deep ResNet architectures (e.g., ResNet-50, ResNet-101).
+
+        The Bottleneck block reduces computational cost by using 1x1 convolutions to reduce and increase the channel
+        dimensions before and after a 3x3 convolution.
+
+        params:
+            - in_channels (int): Number of input channels.
+            - out_channels (int): Number of output channels before expansion.
+            - stride (int, optional): Stride for the first convolution layer. Defaults to 1.
+            - projections (nn.Module, optional): Projection layer for aligning dimensions in the residual connection.
+    """
+
     def __init__(self, in_channels, out_channels, stride=1, projections=None):
         super(Bottleneck, self).__init__()
         self.expansion = 4
@@ -95,6 +108,16 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
+    """
+        A ResNet model implementation.
+
+        Args:
+            block (nn.Module): Block type (BasicBlock or Bottleneck).
+            layers (list[int]): Number of blocks in each layer.
+            num_classes (int, optional): Number of output classes. Defaults to 1000.
+            color_channels (int, optional): Number of input color channels. Defaults to 3.
+    """
+
     def __init__(self, block, layers, num_classes=1000, color_channels=3):
         super(ResNet, self).__init__()
         self.in_channels = 64
