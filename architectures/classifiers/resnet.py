@@ -2,7 +2,7 @@ from torch import nn
 
 
 class BasicBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, stride=1, projections=None):
+    def __init__(self, in_channels: int, out_channels: int, stride: int = 1, projections: nn.Module = None):
         """
             A Basic Block for ResNet.
 
@@ -120,7 +120,6 @@ class ResNet(nn.Module):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 # fan_out helps stabilize gradient flow during backpropagation for very deep networks
-                # PyTorch's implementation uses fan_out
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
             elif isinstance(m, nn.BatchNorm2d):
                 # Default initialization, ensures that BN behaves like identity initially
