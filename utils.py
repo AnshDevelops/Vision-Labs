@@ -1,4 +1,5 @@
 import os
+import torch
 import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 from torch.utils.data import DataLoader
