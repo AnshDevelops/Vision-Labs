@@ -2,7 +2,6 @@ import os
 import torch
 import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
-from torch.utils.data import DataLoader
 
 
 def get_num_files(path) -> None:
@@ -15,7 +14,7 @@ def get_num_files(path) -> None:
         print(f"There are {len(filenames)} images in '{path}'.")
 
 
-def get_normalization_params(loader: DataLoader) -> Tuple[torch.Tensor, torch.Tensor]:
+def get_normalization_params(loader: torch.utils.data.DataLoader) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Computes the mean and standard deviation across all images in a DataLoader.
     :param loader: DataLoader containing the dataset.
