@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 
 
-def get_num_files(path):
+def get_num_files(path) -> None:
     """
     Walks through a directory and prints its contents
     :param path: Path to directory.
